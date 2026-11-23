@@ -1,0 +1,24 @@
+field_name,zeek_type,python_type,category,missing_representation,description
+ts,time,float,temporal,-,Timestamp of connection start in epoch seconds
+uid,string,str,identifier,-,Unique identifier string for connection
+id.orig_h,addr,str,network_identifier,-,Originating IP address
+id.orig_p,port,int,network_port,-,Originating transport port
+id.resp_h,addr,str,network_identifier,-,Responding IP address
+id.resp_p,port,int,network_port,-,Responding transport port
+proto,enum,str,protocol,-,Transport layer protocol (tcp udp icmp)
+service,string,str,protocol,-,Determined application protocol (http dns etc)
+duration,interval,float,metric,-,Connection duration in seconds
+orig_bytes,count,int,metric,-,Originator payload bytes transferred
+resp_bytes,count,int,metric,-,Responder payload bytes transferred
+conn_state,string,str,status,-,Connection state summary flag
+local_orig,bool,bool,status,-,Connection originated locally flag
+local_resp,bool,bool,status,-,Connection responded locally flag
+missed_bytes,count,int,metric,-,Bytes missed by content inspection
+history,string,str,status,-,Connection state history string
+orig_pkts,count,int,metric,-,Originator packets transmitted
+orig_ip_bytes,count,int,metric,-,Originator total IP layer bytes
+resp_pkts,count,int,metric,-,Responder packets transmitted
+resp_ip_bytes,count,int,metric,-,Responder total IP layer bytes
+tunnel_parents,set[string],str,metadata,-,Parent tunnel connection UIDs
+label,string,str,target,-,High-level classification (Malicious or Benign)
+detailed-label,string,str,target,-,Fine-grained attack pattern or specific botnet family
