@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IoT-23 Dataset Engineering Pipeline</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #21262d;
+      --border: #30363d;
+      --text: #c9d1d9;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --accent2: #3fb950;
+      --accent3: #d29922;
+      --accent4: #f85149;
+      --accent5: #bc8cff;
+      --accent6: #39d353;
+      --pill-bg: #1f3a5f;
+      --tag-m1: #0d2137;
+      --tag-m2: #1a2d0d;
+      --tag-m3: #2d1a0d;
+      --tag-m4: #2d0d2d;
+      font-size: 15px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13,17,23,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 0 2rem;
+      height: 52px;
+    }
+    nav .logo {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--accent);
+      letter-spacing: -.3px;
+      margin-right: 2rem;
+      white-space: nowrap;
+    }
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: .85rem;
+      padding: .4rem .8rem;
+      border-radius: 6px;
+      transition: color .15s, background .15s;
+      white-space: nowrap;
+    }
+    nav a:hover { color: var(--text); background: var(--surface2); }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #0d1117 0%, #101820 50%, #0d1f0d 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 4rem 2rem 3rem;
+      text-align: center;
+    }
+    .hero .badge {
+      display: inline-block;
+      background: #0d2137;
+      border: 1px solid #1f4a7f;
+      color: var(--accent);
+      font-size: .75rem;
+      padding: .25rem .75rem;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 1.2rem;
+    }
+    .hero h1 {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 800;
+      color: #e6edf3;
+      line-height: 1.2;
+      margin-bottom: .8rem;
+    }
+    .hero h1 span { color: var(--accent2); }
+    .hero .sub {
+      max-width: 680px;
+      margin: 0 auto 2rem;
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin-top: 2.5rem;
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat .num {
+      display: block;
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .hero-stat .lbl {
+      font-size: .78rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-top: .3rem;
+    }
+    .cta-row {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .6rem 1.4rem;
+      border-radius: 8px;
+      font-size: .9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity .15s, transform .1s;
+    }
+    .btn:hover { opacity: .85; transform: translateY(-1px); }
+    .btn-primary { background: var(--accent); color: #0d1117; }
+    .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+    section { padding: 3.5rem 0; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #e6edf3;
+      margin-bottom: .4rem;
+    }
+    .section-desc {
+      color: var(--text-muted);
+      font-size: .9rem;
+      margin-bottom: 2rem;
+    }
+
+    /* ── PLANES ── */
+    .planes {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    .plane-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    .plane-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: .5rem;
+    }
+    .plane-card .plane-machine {
+      font-size: .78rem;
+      color: var(--text-muted);
+      margin-bottom: .8rem;
+      font-family: monospace;
+    }
+    .plane-card ul {
+      list-style: none;
+      font-size: .85rem;
+      color: var(--text-muted);
+    }
+    .plane-card ul li { padding: .2rem 0; }
+    .plane-card ul li::before { content: "→ "; color: var(--accent); }
+    .plane-control h3 { color: var(--accent); }
+    .plane-compute h3 { color: var(--accent3); }
+    .plane-storage h3 { color: var(--accent2); }
+
+    /* ── STAGES ── */
+    .milestone-block { margin-bottom: 2.5rem; }
+    .milestone-header {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      margin-bottom: 1rem;
+    }
+    .milestone-pill {
+      font-size: .78rem;
+      font-weight: 700;
+      padding: .3rem .9rem;
+      border-radius: 20px;
+      border: 1px solid;
+    }
+    .m1 { background: var(--tag-m1); border-color: #1f4a7f; color: var(--accent); }
+    .m2 { background: var(--tag-m2); border-color: #2d6e1a; color: var(--accent2); }
+    .m3 { background: var(--tag-m3); border-color: #7a5200; color: var(--accent3); }
+    .m4 { background: var(--tag-m4); border-color: #6b2a8a; color: var(--accent5); }
+    .milestone-tag {
+      font-size: .8rem;
+      color: var(--text-muted);
+      font-family: monospace;
+    }
+    .stage-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: .75rem;
+    }
+    .stage-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.1rem 1.2rem;
+      position: relative;
+      transition: border-color .15s, transform .1s;
+    }
+    .stage-card:hover { border-color: #444c56; transform: translateY(-2px); }
+    .stage-card.active { border-color: var(--accent); }
+    .stage-card.active::after {
+      content: "IN PROGRESS";
+      position: absolute;
+      top: .7rem;
+      right: .8rem;
+      font-size: .65rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: .5px;
+      background: #0d2137;
+      padding: .15rem .5rem;
+      border-radius: 20px;
+      border: 1px solid #1f4a7f;
+    }
+    .stage-num {
+      font-size: .75rem;
+      color: var(--text-muted);
+      font-family: monospace;
+      margin-bottom: .3rem;
+    }
+    .stage-name {
+      font-size: .95rem;
+      font-weight: 700;
+      color: #e6edf3;
+      margin-bottom: .4rem;
+    }
+    .stage-desc {
+      font-size: .8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+    .stage-kaggle {
+      font-size: .7rem;
+      color: var(--accent2);
+      margin-top: .6rem;
+    }
+    .stage-kaggle.no-kaggle { color: var(--text-muted); }
+
+    /* ── AGENTS ── */
+    .agents-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.2rem;
+    }
+    .agent-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .agent-header {
+      padding: 1.2rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .agent-role {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: .4rem;
+    }
+    .agent-header h3 { font-size: 1.1rem; font-weight: 700; color: #e6edf3; }
+    .agent-desc { font-size: .82rem; color: var(--text-muted); margin-top: .5rem; line-height: 1.4; }
+    .agent-body { padding: 1.2rem 1.5rem; }
+    .agent-may { margin-bottom: 1rem; }
+    .agent-may h4 { font-size: .78rem; text-transform: uppercase; letter-spacing: .5px; color: var(--text-muted); margin-bottom: .5rem; }
+    .can { color: var(--accent2); }
+    .cannot { color: var(--accent4); }
+    .agent-pill-row { display: flex; flex-wrap: wrap; gap: .4rem; }
+    .agent-pill {
+      font-size: .75rem;
+      padding: .2rem .6rem;
+      border-radius: 20px;
+      border: 1px solid;
+    }
+    .can-pill { background: #0d2137; border-color: #1f6e3a; color: var(--accent2); }
+    .cannot-pill { background: #2d0d0d; border-color: #6e1f1f; color: var(--accent4); }
+    .manager-accent { border-color: #bc8cff; }
+    .manager-accent .agent-role { color: var(--accent5); }
+    .de-accent { border-color: var(--accent); }
+    .de-accent .agent-role { color: var(--accent); }
+    .tester-accent { border-color: var(--accent2); }
+    .tester-accent .agent-role { color: var(--accent2); }
+
+    /* ── INVARIANTS ── */
+    .invariants-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: .75rem;
+    }
+    .inv-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent4);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+    }
+    .inv-num {
+      font-size: .7rem;
+      color: var(--accent4);
+      font-family: monospace;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+    .inv-title {
+      font-size: .9rem;
+      font-weight: 700;
+      color: #e6edf3;
+      margin: .3rem 0 .4rem;
+    }
+    .inv-body { font-size: .78rem; color: var(--text-muted); line-height: 1.4; }
+
+    /* ── DATASET ── */
+    .dataset-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 700px) { .dataset-layout { grid-template-columns: 1fr; } }
+    .dataset-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .dataset-header {
+      background: var(--surface2);
+      padding: 1rem 1.4rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .dataset-header h3 { font-size: .95rem; font-weight: 700; color: #e6edf3; }
+    .dataset-tag {
+      font-size: .7rem;
+      padding: .2rem .6rem;
+      border-radius: 20px;
+      border: 1px solid;
+    }
+    .dataset-a-tag { background: #2d0d0d; border-color: #6e1f1f; color: var(--accent4); }
+    .dataset-b-tag { background: #0d2137; border-color: #1f6e3a; color: var(--accent2); }
+    .dataset-body { padding: 1.2rem 1.4rem; }
+    .dataset-prop { display: flex; gap: .5rem; margin-bottom: .5rem; font-size: .82rem; }
+    .dataset-prop-key { color: var(--text-muted); min-width: 80px; flex-shrink: 0; }
+    .dataset-prop-val { color: var(--text); font-family: monospace; word-break: break-all; }
+    .dataset-prop-val a { color: var(--accent); text-decoration: none; }
+    .dataset-prop-val a:hover { text-decoration: underline; }
+    .file-table { margin-top: 1rem; width: 100%; border-collapse: collapse; font-size: .78rem; }
+    .file-table th { text-align: left; color: var(--text-muted); font-weight: 600; padding: .4rem .6rem; border-bottom: 1px solid var(--border); }
+    .file-table td { padding: .3rem .6rem; color: var(--text); border-bottom: 1px solid #21262d; font-family: monospace; }
+    .file-table tr:last-child td { border-bottom: none; }
+    .file-size { text-align: right; color: var(--text-muted); }
+    .large { color: var(--accent3); }
+
+    /* ── BRANCH FLOW ── */
+    .flow-visual {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-top: 1.5rem;
+      overflow-x: auto;
+    }
+    .flow-row {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      min-width: max-content;
+      margin-bottom: 1.5rem;
+    }
+    .flow-row:last-child { margin-bottom: 0; }
+    .flow-node {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .5rem 1rem;
+      font-size: .82rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .flow-node.branch { border-color: var(--accent); color: var(--accent); }
+    .flow-node.pr { border-color: var(--accent5); color: var(--accent5); }
+    .flow-node.merge { border-color: var(--accent2); color: var(--accent2); }
+    .flow-node.role { border-color: var(--accent3); color: var(--accent3); font-size: .75rem; }
+    .flow-arrow { color: var(--text-muted); font-size: 1.1rem; flex-shrink: 0; }
+    .flow-label { font-size: .75rem; color: var(--text-muted); align-self: flex-end; padding-bottom: .4rem; }
+
+    /* ── PR FLOW ── */
+    .pr-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .pr-step {
+      padding: 1.2rem;
+      border-right: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .pr-step:last-child { border-right: none; }
+    .pr-step-num {
+      font-size: .7rem;
+      color: var(--accent);
+      font-family: monospace;
+      font-weight: 700;
+      margin-bottom: .4rem;
+    }
+    .pr-step-title {
+      font-size: .88rem;
+      font-weight: 700;
+      color: #e6edf3;
+      margin-bottom: .3rem;
+    }
+    .pr-step-who { font-size: .75rem; color: var(--text-muted); }
+
+    /* ── EVIDENCE ── */
+    .evidence-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: .75rem;
+      margin-top: 1rem;
+    }
+    .ev-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent5);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    .ev-num { font-size: .7rem; color: var(--accent5); font-weight: 700; margin-bottom: .3rem; }
+    .ev-title { font-size: .88rem; font-weight: 700; color: #e6edf3; margin-bottom: .3rem; }
+    .ev-desc { font-size: .78rem; color: var(--text-muted); }
+
+    /* ── PATHS TABLE ── */
+    table.paths-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .83rem;
+      margin-top: 1rem;
+    }
+    .paths-table th {
+      text-align: left;
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: .5rem .8rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface2);
+    }
+    .paths-table td {
+      padding: .5rem .8rem;
+      border-bottom: 1px solid #21262d;
+      vertical-align: top;
+    }
+    .paths-table tr:last-child td { border-bottom: none; }
+    .paths-table td:first-child { font-family: monospace; color: var(--accent2); font-size: .8rem; }
+    .paths-table td:last-child { color: var(--text-muted); }
+    .paths-table { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+
+    /* ── WHAT NEVER ── */
+    .never-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 600px) { .never-grid { grid-template-columns: 1fr; } }
+    .never-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem;
+    }
+    .never-card h4 { font-size: .9rem; font-weight: 700; margin-bottom: .8rem; }
+    .never-card h4.red { color: var(--accent4); }
+    .never-card h4.green { color: var(--accent2); }
+    .never-list { list-style: none; font-size: .82rem; }
+    .never-list li { padding: .25rem 0; color: var(--text-muted); }
+    .never-list li::before { margin-right: .5rem; }
+    .never-list.no li::before { content: "✗"; color: var(--accent4); }
+    .never-list.yes li::before { content: "✓"; color: var(--accent2); }
+
+    /* ── STATUS BOARD ── */
+    .status-board {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .status-row {
+      display: grid;
+      grid-template-columns: 60px 1fr 1fr 120px;
+      gap: 0;
+      padding: .7rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+      font-size: .83rem;
+    }
+    .status-row:last-child { border-bottom: none; }
+    .status-row.header { background: var(--surface2); font-size: .78rem; color: var(--text-muted); font-weight: 600; }
+    .status-stage { font-family: monospace; color: var(--text-muted); font-size: .78rem; }
+    .status-name { color: var(--text); font-weight: 500; }
+    .status-owner { color: var(--text-muted); font-size: .78rem; }
+    .status-badge {
+      font-size: .7rem;
+      padding: .2rem .7rem;
+      border-radius: 20px;
+      text-align: center;
+      border: 1px solid;
+      white-space: nowrap;
+    }
+    .s-todo { background: #21262d; border-color: var(--border); color: var(--text-muted); }
+    .s-active { background: #0d2137; border-color: #1f4a7f; color: var(--accent); }
+    .s-done { background: #0d2d14; border-color: #1f6e3a; color: var(--accent2); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      font-size: .82rem;
+      color: var(--text-muted);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    footer .citation {
+      max-width: 680px;
+      margin: .8rem auto 0;
+      font-style: italic;
+      font-size: .78rem;
+    }
+
+    /* ── CODE ── */
+    code {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: .1rem .4rem;
+      font-size: .82em;
+      font-family: monospace;
+      color: var(--accent2);
+    }
+
+    @media (max-width: 768px) {
+      nav { gap: 0; padding: 0 1rem; }
+      nav a { padding: .4rem .5rem; font-size: .78rem; }
+      .hero { padding: 2.5rem 1rem 2rem; }
+      .hero-stats { gap: 1.5rem; }
+      .status-row { grid-template-columns: 50px 1fr 100px; }
+      .status-owner { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="logo">IDP · IoT-23</span>
+  <a href="#overview">Overview</a>
+  <a href="#planes">Architecture</a>
+  <a href="#stages">Stages</a>
+  <a href="#agents">Agents</a>
+  <a href="#dataset">Dataset</a>
+  <a href="#invariants">Invariants</a>
+  <a href="#workflow">Workflow</a>
+  <a href="#paths">Paths</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="badge">Research-grade dataset pipeline</div>
+  <h1>IoT-23 Dataset <span>Engineering Pipeline</span></h1>
+  <p class="sub">
+    Preparing the Stratosphere Laboratory IoT-23 labelled network-flow dataset into a reproducible,
+    scenario-partitioned, research-grade artifact — in 13 documented stages, with every transformation
+    provable and every claim traceable to a committed script.
+  </p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <span class="num">13</span>
+      <span class="lbl">Pipeline Stages</span>
+    </div>
+    <div class="hero-stat">
+      <span class="num">4</span>
+      <span class="lbl">Milestones</span>
+    </div>
+    <div class="hero-stat">
+      <span class="num">18</span>
+      <span class="lbl">Raw Capture Files</span>
+    </div>
+    <div class="hero-stat">
+      <span class="num">~21 GB</span>
+      <span class="lbl">Dataset Size</span>
+    </div>
+    <div class="hero-stat">
+      <span class="num">3</span>
+      <span class="lbl">Agents</span>
+    </div>
+    <div class="hero-stat">
+      <span class="num">10</span>
+      <span class="lbl">Invariants</span>
+    </div>
+  </div>
+  <div class="cta-row">
+    <a class="btn btn-primary" href="https://github.com/Harish020904/IDP-LOCAL" target="_blank">GitHub Repository</a>
+    <a class="btn btn-secondary" href="https://www.kaggle.com/datasets/harishragavender0209/iot-23-raw" target="_blank">Dataset A on Kaggle</a>
+    <a class="btn btn-secondary" href="https://github.com/Harish020904/IDP-LOCAL/issues/1" target="_blank">Issue #1 — Stage 00</a>
+  </div>
+</div>
+
+<!-- OVERVIEW -->
+<section id="overview">
+  <div class="container">
+    <div class="section-title">What this project is</div>
+    <p class="section-desc">The deliverable is not a model. It is a documented, reproducible dataset pipeline whose output another researcher can regenerate from the same source data.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;">
+        <div style="color:var(--accent);font-weight:700;margin-bottom:.5rem;">The goal</div>
+        <p style="font-size:.87rem;color:var(--text-muted);line-height:1.6;">
+          Transform the raw IoT-23 Zeek <code>conn.log</code> captures into a partitioned, documented,
+          version-tagged Parquet dataset ready for NIDS model evaluation research. Every transformation is
+          logged. Every row removed is attributable to a numbered operation. Every number in a report
+          traces to a committed script.
+        </p>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;">
+        <div style="color:var(--accent3);font-weight:700;margin-bottom:.5rem;">What it is not</div>
+        <ul style="list-style:none;font-size:.85rem;color:var(--text-muted);line-height:1.8;">
+          <li>✗ Not a model training pipeline</li>
+          <li>✗ Not a benchmark evaluation</li>
+          <li>✗ Not a feature selection study</li>
+          <li>✗ Not a balancing or resampling exercise</li>
+          <li>✗ Not a data download tool</li>
+        </ul>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;">
+        <div style="color:var(--accent2);font-weight:700;margin-bottom:.5rem;">The source</div>
+        <p style="font-size:.87rem;color:var(--text-muted);line-height:1.6;">
+          IoT-23 (Stratosphere Laboratory, v1.0.0) — 23 network captures from real IoT devices,
+          20 malicious and 3 benign, labelled at the flow level by security analysts.
+          DOI: <a href="https://doi.org/10.5281/zenodo.4743746" target="_blank" style="color:var(--accent);">10.5281/zenodo.4743746</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section id="planes">
+  <div class="container">
+    <div class="section-title">Three-Plane Architecture</div>
+    <p class="section-desc">The laptop is a control plane only. The dataset never leaves Kaggle. This is the same separation a company makes between a developer workstation and a build farm.</p>
+
+    <div class="planes">
+      <div class="plane-card plane-control">
+        <h3>Control Plane</h3>
+        <div class="plane-machine">Arch Linux laptop · harish · 12 GB RAM</div>
+        <ul>
+          <li>agy CLI &amp; agents</li>
+          <li>git + gh (code &amp; docs)</li>
+          <li>kaggle CLI (push/pull only)</li>
+          <li>Obsidian vault (second brain)</li>
+          <li>Small reports, manifests, checksums</li>
+          <li style="color:var(--accent4);">No dataset. No Parquet. No full CSVs.</li>
+        </ul>
+      </div>
+      <div class="plane-card plane-compute">
+        <h3>Compute Plane</h3>
+        <div class="plane-machine">Kaggle Kernels · fixed image · recorded versions</div>
+        <ul>
+          <li>Every row scan and column profile</li>
+          <li>Every join, transform, and test</li>
+          <li>Gate tests run on real data</li>
+          <li>Outputs written to <code>/kaggle/working</code></li>
+          <li>Resumable per scenario (chunked)</li>
+          <li>Reproducible: same image, same packages</li>
+        </ul>
+      </div>
+      <div class="plane-card plane-storage">
+        <h3>Storage Plane</h3>
+        <div class="plane-machine">Kaggle Datasets · versioned V0–V5</div>
+        <ul>
+          <li><strong>Dataset A:</strong> raw original — immutable</li>
+          <li><strong>Dataset B:</strong> prepared outputs</li>
+          <li>V0 placeholder → V1 (M1) → V3 (M3) → V5 (M4)</li>
+          <li>Mounted at <code>/kaggle/input/</code></li>
+          <li>SHA-256 verified every stage</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="margin-top:1.5rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;font-family:monospace;font-size:.82rem;color:var(--text-muted);overflow-x:auto;">
+      <pre style="margin:0;line-height:1.8;">
+  Arch Linux laptop                    Kaggle
+  ─────────────────                    ──────
+  agy  (agents)                        kernels   ← every scan, transform, test
+  git  (code + docs)          ──push──▶
+  kaggle CLI                  ◀─pull──  outputs  ← reports, manifests, checksums
+  Obsidian vault                       datasets  ← V0 original, V1..V5 prepared
+      </pre>
+    </div>
+  </div>
+</section>
+
+<!-- STAGES -->
+<section id="stages">
+  <div class="container">
+    <div class="section-title">13-Stage Pipeline</div>
+    <p class="section-desc">Stage numbers are fixed. Do not renumber, merge or skip stages. One notebook and one PR per stage.</p>
+
+    <!-- STATUS BOARD -->
+    <div class="status-board" style="margin-bottom:2.5rem;">
+      <div class="status-row header">
+        <div>Stage</div>
+        <div>Name</div>
+        <div>Owner</div>
+        <div>Status</div>
+      </div>
+      <div class="status-row"><div class="status-stage">00</div><div class="status-name">Project Definition</div><div class="status-owner">data-engineer</div><div><span class="status-badge s-active">In Progress</span></div></div>
+      <div class="status-row"><div class="status-stage">01</div><div class="status-name">Acquisition &amp; Integrity</div><div class="status-owner">data-engineer</div><div><span class="status-badge s-todo">To Do</span></div></div>
+      <div class="status-row"><div class="status-stage">02</div><div class="status-name">Raw Inventory</div><div class="status-owner">data-engineer</div><div><span class="status-badge s-todo">To Do</span></div></div>
+      <div class="status-row"><div class="status-stage">03</div><div class="status-name">Zeek Schema</div><div class="status-owner">data-engineer</div><div><span class="status-badge s-todo">To Do</span></div></div>
+      <div class="status-row"><div class="status-stage">04</div><div class="status-name">Raw Profiling &amp; Visualisation</div><div class="status-owner">data-engineer</div><div><span class="status-badge s-todo">To Do</span></div></div>
+      <div class="status-row"><div class="status-stage">05</div><div class="status-name">Data Quality Assessment</div><div class="status-owner">data-engineer</div><div><span class="status-badge s-todo">To Do</span></div></div>
+      <div class="status-row"><div class="status-stage">06</div><div class="status-name">Cleaning</div><div class="status-owner">data-engineer</div><div><span class="status-badge s-todo">To Do</span></div></div>
+      <div class="status-row"><div class="status-stage">07</div><div class="status-name">Feature Governance</div><div class="status-owner">data-engineer</div><div><span class="status-badge s-todo">To Do</span></div></div>
+      <div class="status-row"><div class="status-stage">08</div><div class="status-name">Data Partitioning</div><div class="status-owner">data-engineer</div><div><span class="status-badge s-todo">To Do</span></div></div>
+      <div class="status-row"><div class="status-stage">09</div><div class="status-name">Preprocessing</div><div class="status-owner">data-engineer</div><div><span class="status-badge s-todo">To Do</span></div></div>
+      <div class="status-row"><div class="status-stage">10</div><div class="status-name">Storage &amp; Organisation</div><div class="status-owner">data-engineer</div><div><span class="status-badge s-todo">To Do</span></div></div>
+      <div class="status-row"><div class="status-stage">11</div><div class="status-name">Integrity &amp; Reproducibility</div><div class="status-owner">data-engineer</div><div><span class="status-badge s-todo">To Do</span></div></div>
+      <div class="status-row"><div class="status-stage">12</div><div class="status-name">Class Imbalance Report</div><div class="status-owner">data-engineer</div><div><span class="status-badge s-todo">To Do</span></div></div>
+    </div>
+
+    <!-- M1 -->
+    <div class="milestone-block">
+      <div class="milestone-header">
+        <span class="milestone-pill m1">M1 · Foundation</span>
+        <span style="color:var(--text-muted);font-size:.88rem;">Stages 0–3 · Know what you have</span>
+        <span class="milestone-tag">→ tag: v1-inspected</span>
+      </div>
+      <div class="stage-grid">
+        <div class="stage-card active">
+          <div class="stage-num">STAGE 00</div>
+          <div class="stage-name">Project Definition</div>
+          <div class="stage-desc">Commits the project brief, scope, invariants, dataset citation, 13-stage plan. Defines what the pipeline does and explicitly does not do.</div>
+          <div class="stage-kaggle no-kaggle">Control plane only — no Kaggle kernel</div>
+        </div>
+        <div class="stage-card">
+          <div class="stage-num">STAGE 01</div>
+          <div class="stage-name">Acquisition &amp; Integrity</div>
+          <div class="stage-desc">Verifies the archive SHA-256 against the Stratosphere DOI. Confirms 20 malicious + 3 benign captures. Establishes Dataset A as immutable.</div>
+          <div class="stage-kaggle">Kaggle kernel · reads Dataset A</div>
+        </div>
+        <div class="stage-card">
+          <div class="stage-num">STAGE 02</div>
+          <div class="stage-name">Raw Inventory</div>
+          <div class="stage-desc">Row count per capture, byte sizes, file manifest. Produces the canonical capture manifest that all later stages reference for reconciliation.</div>
+          <div class="stage-kaggle">Kaggle kernel · reads Dataset A</div>
+        </div>
+        <div class="stage-card">
+          <div class="stage-num">STAGE 03</div>
+          <div class="stage-name">Zeek Schema</div>
+          <div class="stage-desc">Parses Zeek conn.log headers. Builds the data dictionary: every field named, typed, and described. Confirms label and detailed-label present across all captures.</div>
+          <div class="stage-kaggle">Kaggle kernel · reads Dataset A</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- M2 -->
+    <div class="milestone-block">
+      <div class="milestone-header">
+        <span class="milestone-pill m2">M2 · Understanding</span>
+        <span style="color:var(--text-muted);font-size:.88rem;">Stages 4–5 · Prove what is wrong with it</span>
+        <span class="milestone-tag">→ tag: v2-audited</span>
+      </div>
+      <div class="stage-grid">
+        <div class="stage-card">
+          <div class="stage-num">STAGE 04</div>
+          <div class="stage-name">Raw Profiling &amp; Visualisation</div>
+          <div class="stage-desc">Distribution of every column. Per-scenario class counts. Label frequency table. Figures committed to docs/04-reports. No transformation — observation only.</div>
+          <div class="stage-kaggle">Kaggle kernel · reads Dataset A</div>
+        </div>
+        <div class="stage-card">
+          <div class="stage-num">STAGE 05</div>
+          <div class="stage-name">Data Quality Assessment</div>
+          <div class="stage-desc">Audit: missing values, negative durations, out-of-range ports, duplicate UIDs, impossible label combos, capture-specific schema differences. Every finding gets a decision.</div>
+          <div class="stage-kaggle">Kaggle kernel · reads Dataset A</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- M3 -->
+    <div class="milestone-block">
+      <div class="milestone-header">
+        <span class="milestone-pill m3">M3 · Transformation</span>
+        <span style="color:var(--text-muted);font-size:.88rem;">Stages 6–9 · Change it deliberately</span>
+        <span class="milestone-tag">→ tag: v3-transformed</span>
+      </div>
+      <div class="stage-grid">
+        <div class="stage-card">
+          <div class="stage-num">STAGE 06</div>
+          <div class="stage-name">Cleaning</div>
+          <div class="stage-desc">Every removal logged to cleaning-log.csv with operation number, condition, reason, row count. Reconciliation identity: raw = cleaned + removed, per scenario, exactly.</div>
+          <div class="stage-kaggle">Kaggle kernel · reads Dataset A → publishes Dataset B V1</div>
+        </div>
+        <div class="stage-card">
+          <div class="stage-num">STAGE 07</div>
+          <div class="stage-name">Feature Governance</div>
+          <div class="stage-desc">Every column assigned a role: feature / target / metadata / dropped. Leakage register built. No column dropped without documented reason. No IP dropped "to avoid leakage".</div>
+          <div class="stage-kaggle">Kaggle kernel · reads Dataset B</div>
+        </div>
+        <div class="stage-card">
+          <div class="stage-num">STAGE 08</div>
+          <div class="stage-name">Data Partitioning</div>
+          <div class="stage-desc">Whole scenarios assigned to train / validation / test. No scenario crosses a boundary. Partition manifest committed. Single-scenario labels documented, not engineered around.</div>
+          <div class="stage-kaggle">Kaggle kernel · reads Dataset B → publishes V2</div>
+        </div>
+        <div class="stage-card">
+          <div class="stage-num">STAGE 09</div>
+          <div class="stage-name">Preprocessing</div>
+          <div class="stage-desc">Imputation, scaling, encoding — all fitted on train, applied unchanged to validation and test. Every parameter records fit_source = train. Gate test asserts this.</div>
+          <div class="stage-kaggle">Kaggle kernel · reads Dataset B → publishes V3</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- M4 -->
+    <div class="milestone-block">
+      <div class="milestone-header">
+        <span class="milestone-pill m4">M4 · Product</span>
+        <span style="color:var(--text-muted);font-size:.88rem;">Stages 10–12 · Prove it, reproduce it, publish it</span>
+        <span class="milestone-tag">→ tag: v5-validated</span>
+      </div>
+      <div class="stage-grid">
+        <div class="stage-card">
+          <div class="stage-num">STAGE 10</div>
+          <div class="stage-name">Storage &amp; Organisation</div>
+          <div class="stage-desc">Final Parquet files organised into the Dataset B structure. Row counts, dtypes, checksums verified. File size limits respected. Version V4 published.</div>
+          <div class="stage-kaggle">Kaggle kernel · finalises Dataset B → publishes V4</div>
+        </div>
+        <div class="stage-card">
+          <div class="stage-num">STAGE 11</div>
+          <div class="stage-name">Integrity &amp; Reproducibility</div>
+          <div class="stage-desc">Independent re-run from scratch. Checksums compared. 10 required measurements re-derived. Reconciliation identity per scenario confirmed.</div>
+          <div class="stage-kaggle">Kaggle kernel · end-to-end re-run</div>
+        </div>
+        <div class="stage-card">
+          <div class="stage-num">STAGE 12</div>
+          <div class="stage-name">Class Imbalance Report</div>
+          <div class="stage-desc">Documents the imbalance — it does not fix it. Per-scenario and per-partition class distributions. Row counts unchanged from Stage 11 (the proof no resampling occurred). Version V5 published.</div>
+          <div class="stage-kaggle">Kaggle kernel · reporting only → publishes V5</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AGENTS -->
+<section id="agents">
+  <div class="container">
+    <div class="section-title">Three-Agent System</div>
+    <p class="section-desc">Nobody merges their own work. The manager is the only merger, and only when both keys agree — manager review and tester verdict.</p>
+
+    <div class="agents-grid">
+      <!-- MANAGER -->
+      <div class="agent-card manager-accent">
+        <div class="agent-header">
+          <div class="agent-role" style="color:var(--accent5);">Manager · Controls main branch</div>
+          <h3>manager</h3>
+          <p class="agent-desc">Assigns stages, reviews every PR against acceptance criteria, routes to tester, and is the only agent permitted to merge to main. Owns scope, review, and the merge decision.</p>
+        </div>
+        <div class="agent-body">
+          <div class="agent-may">
+            <h4 class="can">May</h4>
+            <div class="agent-pill-row">
+              <span class="agent-pill can-pill">read files</span>
+              <span class="agent-pill can-pill">run git/gh</span>
+              <span class="agent-pill can-pill">comment on PRs</span>
+              <span class="agent-pill can-pill">approve PRs</span>
+              <span class="agent-pill can-pill">merge to main</span>
+              <span class="agent-pill can-pill">assign stages</span>
+            </div>
+          </div>
+          <div class="agent-may">
+            <h4 class="cannot">May not</h4>
+            <div class="agent-pill-row">
+              <span class="agent-pill cannot-pill">write pipeline code</span>
+              <span class="agent-pill cannot-pill">merge without tester verdict</span>
+              <span class="agent-pill cannot-pill">fix defects</span>
+              <span class="agent-pill cannot-pill">approve without evidence pack</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DATA ENGINEER -->
+      <div class="agent-card de-accent">
+        <div class="agent-header">
+          <div class="agent-role" style="color:var(--accent);">Data Engineer · Works on EDL-Pipeline</div>
+          <h3>data-engineer</h3>
+          <p class="agent-desc">Implements one stage at a time. Writes notebooks and pipeline code, pushes to Kaggle, pulls back small outputs, writes gate tests and stage note, raises a PR for review.</p>
+        </div>
+        <div class="agent-body">
+          <div class="agent-may">
+            <h4 class="can">May</h4>
+            <div class="agent-pill-row">
+              <span class="agent-pill can-pill">read &amp; edit files</span>
+              <span class="agent-pill can-pill">push kernels</span>
+              <span class="agent-pill can-pill">write tests</span>
+              <span class="agent-pill can-pill">raise PRs</span>
+              <span class="agent-pill can-pill">write stage notes</span>
+            </div>
+          </div>
+          <div class="agent-may">
+            <h4 class="cannot">May not</h4>
+            <div class="agent-pill-row">
+              <span class="agent-pill cannot-pill">merge</span>
+              <span class="agent-pill cannot-pill">approve own work</span>
+              <span class="agent-pill cannot-pill">download dataset locally</span>
+              <span class="agent-pill cannot-pill">run full scans on laptop</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TESTER -->
+      <div class="agent-card tester-accent">
+        <div class="agent-header">
+          <div class="agent-role" style="color:var(--accent2);">Tester · Independent verification</div>
+          <h3>tester</h3>
+          <p class="agent-desc">Verifies independently against the requirements, not the code. Re-derives numbers with different tooling. Writes a five-line verdict. The one who does not share the engineer's mental model.</p>
+        </div>
+        <div class="agent-body">
+          <div class="agent-may">
+            <h4 class="can">May</h4>
+            <div class="agent-pill-row">
+              <span class="agent-pill can-pill">read files</span>
+              <span class="agent-pill can-pill">run verification kernels</span>
+              <span class="agent-pill can-pill">write review files</span>
+              <span class="agent-pill can-pill">search documentation</span>
+              <span class="agent-pill can-pill">issue verdicts</span>
+            </div>
+          </div>
+          <div class="agent-may">
+            <h4 class="cannot">May not</h4>
+            <div class="agent-pill-row">
+              <span class="agent-pill cannot-pill">edit pipeline code</span>
+              <span class="agent-pill cannot-pill">merge</span>
+              <span class="agent-pill cannot-pill">fix defects</span>
+              <span class="agent-pill cannot-pill">accept engineer's number without re-deriving</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TESTER VERDICTS -->
+    <div style="margin-top:1.5rem;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;">
+      <div style="font-weight:700;color:#e6edf3;margin-bottom:1rem;font-size:.95rem;">Tester Verdict Severity</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.75rem;">
+        <div style="border-left:3px solid var(--accent4);padding:.8rem 1rem;background:var(--surface2);border-radius:6px;">
+          <div style="color:var(--accent4);font-weight:700;font-size:.82rem;">S1 — FAIL · Veto</div>
+          <div style="font-size:.78rem;color:var(--text-muted);margin-top:.3rem;">Rows lost silently, scenario crosses partition, label rewritten, raw data modified, balancing applied, parameter fitted on test data. Blocks merge and all further stage work.</div>
+        </div>
+        <div style="border-left:3px solid var(--accent3);padding:.8rem 1rem;background:var(--surface2);border-radius:6px;">
+          <div style="color:var(--accent3);font-weight:700;font-size:.82rem;">S2 — FAIL · Rework</div>
+          <div style="font-size:.78rem;color:var(--text-muted);margin-top:.3rem;">Required deliverable missing or wrong: no ADR for irreversible choice, gate test absent, report section empty, PR number contradicts artifact.</div>
+        </div>
+        <div style="border-left:3px solid var(--accent5);padding:.8rem 1rem;background:var(--surface2);border-radius:6px;">
+          <div style="color:var(--accent5);font-weight:700;font-size:.82rem;">S3 — PASS WITH CONDITIONS</div>
+          <div style="font-size:.78rem;color:var(--text-muted);margin-top:.3rem;">Docs or presentation defect: incomplete note, misleading chart, broken link. Fixable in a follow-up issue if manager agrees.</div>
+        </div>
+        <div style="border-left:3px solid var(--accent2);padding:.8rem 1rem;background:var(--surface2);border-radius:6px;">
+          <div style="color:var(--accent2);font-weight:700;font-size:.82rem;">S4 — PASS · Note only</div>
+          <div style="font-size:.78rem;color:var(--text-muted);margin-top:.3rem;">Cosmetic. Noted in the review but does not block the merge.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DATASET -->
+<section id="dataset">
+  <div class="container">
+    <div class="section-title">Kaggle Datasets</div>
+    <p class="section-desc">Two datasets. Dataset A is immutable from the moment it was uploaded. Dataset B accumulates versions as milestones complete.</p>
+
+    <div class="dataset-layout">
+      <!-- DATASET A -->
+      <div class="dataset-card">
+        <div class="dataset-header">
+          <h3>Dataset A — Raw Original</h3>
+          <span class="dataset-tag dataset-a-tag">READ ONLY · IMMUTABLE</span>
+        </div>
+        <div class="dataset-body">
+          <div class="dataset-prop">
+            <span class="dataset-prop-key">Slug</span>
+            <span class="dataset-prop-val">harishragavender0209/iot-23-raw</span>
+          </div>
+          <div class="dataset-prop">
+            <span class="dataset-prop-key">URL</span>
+            <span class="dataset-prop-val"><a href="https://www.kaggle.com/datasets/harishragavender0209/iot-23-raw" target="_blank">kaggle.com/datasets/harishragavender0209/iot-23-raw</a></span>
+          </div>
+          <div class="dataset-prop">
+            <span class="dataset-prop-key">Mount</span>
+            <span class="dataset-prop-val">/kaggle/input/iot-23-raw/</span>
+          </div>
+          <div class="dataset-prop">
+            <span class="dataset-prop-key">Uploaded</span>
+            <span class="dataset-prop-val">2026-03-03</span>
+          </div>
+          <table class="file-table">
+            <thead><tr><th>File</th><th class="file-size">Size</th></tr></thead>
+            <tbody>
+              <tr><td>8.labeled</td><td class="file-size large">10.1 GB</td></tr>
+              <tr><td>6.labeled</td><td class="file-size large">8.7 GB</td></tr>
+              <tr><td>15.labeled</td><td class="file-size large">7.6 GB</td></tr>
+              <tr><td>12.labeled</td><td class="file-size large">7.3 GB</td></tr>
+              <tr><td>2.labeled</td><td class="file-size">2.9 GB</td></tr>
+              <tr><td>9.labeled</td><td class="file-size">1.7 GB</td></tr>
+              <tr><td>10.labeled</td><td class="file-size">1.2 GB</td></tr>
+              <tr><td>conn.log.labeled</td><td class="file-size">446 MB</td></tr>
+              <tr><td>3.labeled</td><td class="file-size">815 MB</td></tr>
+              <tr><td>4.labeled</td><td class="file-size">507 MB</td></tr>
+              <tr><td>11.labeled</td><td class="file-size">2.9 MB</td></tr>
+              <tr><td>7.labeled</td><td class="file-size">572 KB</td></tr>
+              <tr><td>benign-honeypot2.labeled</td><td class="file-size">178 KB</td></tr>
+              <tr><td>13.labeled</td><td class="file-size">419 KB</td></tr>
+              <tr><td>14.labeled</td><td class="file-size">410 KB</td></tr>
+              <tr><td>benign.labeled</td><td class="file-size">60 KB</td></tr>
+              <tr><td>5.labeled</td><td class="file-size">30 KB</td></tr>
+              <tr><td>benign-honeypot3.labeled</td><td class="file-size">18 KB</td></tr>
+            </tbody>
+          </table>
+          <div style="font-size:.75rem;color:var(--text-muted);margin-top:.6rem;">18 files · confirmed 2026-11-23 from kaggle datasets files</div>
+        </div>
+      </div>
+
+      <!-- DATASET B -->
+      <div class="dataset-card">
+        <div class="dataset-header">
+          <h3>Dataset B — Prepared Outputs</h3>
+          <span class="dataset-tag dataset-b-tag">VERSIONED V0 → V5</span>
+        </div>
+        <div class="dataset-body">
+          <div class="dataset-prop">
+            <span class="dataset-prop-key">Slug</span>
+            <span class="dataset-prop-val">harishragavender0209/iot23-prepared</span>
+          </div>
+          <div class="dataset-prop">
+            <span class="dataset-prop-key">Mount</span>
+            <span class="dataset-prop-val">/kaggle/input/iot23-prepared/</span>
+          </div>
+          <div style="margin-top:1.2rem;">
+            <div style="font-size:.82rem;font-weight:700;color:#e6edf3;margin-bottom:.8rem;">Version Roadmap</div>
+            <div style="display:flex;flex-direction:column;gap:.5rem;">
+              <div style="display:flex;align-items:center;gap:.7rem;font-size:.82rem;">
+                <span style="background:#21262d;border:1px solid var(--border);border-radius:6px;padding:.2rem .6rem;font-family:monospace;font-size:.75rem;color:var(--text-muted);">V0</span>
+                <span style="color:var(--text-muted);">Placeholder (created to establish the dataset)</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:.7rem;font-size:.82rem;">
+                <span style="background:#0d2137;border:1px solid #1f4a7f;border-radius:6px;padding:.2rem .6rem;font-family:monospace;font-size:.75rem;color:var(--accent);">V1</span>
+                <span style="color:var(--text-muted);">M1 complete — inspected, inventoried, schema documented</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:.7rem;font-size:.82rem;">
+                <span style="background:#0d2137;border:1px solid #1f4a7f;border-radius:6px;padding:.2rem .6rem;font-family:monospace;font-size:.75rem;color:var(--accent);">V2</span>
+                <span style="color:var(--text-muted);">M2 complete — quality audited, issues documented</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:.7rem;font-size:.82rem;">
+                <span style="background:#0d2137;border:1px solid #1f4a7f;border-radius:6px;padding:.2rem .6rem;font-family:monospace;font-size:.75rem;color:var(--accent);">V3</span>
+                <span style="color:var(--text-muted);">M3 complete — cleaned, partitioned, preprocessed</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:.7rem;font-size:.82rem;">
+                <span style="background:#0d2137;border:1px solid #1f4a7f;border-radius:6px;padding:.2rem .6rem;font-family:monospace;font-size:.75rem;color:var(--accent);">V5</span>
+                <span style="color:var(--text-muted);">M4 complete — validated, integrity proven, imbalance documented</span>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:1.5rem;background:var(--surface2);border-radius:8px;padding:1rem;">
+            <div style="font-size:.8rem;font-weight:600;color:#e6edf3;margin-bottom:.6rem;">kernel-metadata.json — dataset_sources</div>
+            <pre style="font-family:monospace;font-size:.75rem;color:var(--accent2);margin:0;white-space:pre-wrap;">"dataset_sources": [
+  "harishragavender0209/iot-23-raw",
+  "harishragavender0209/iot23-prepared"
+]</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INVARIANTS -->
+<section id="invariants">
+  <div class="container">
+    <div class="section-title">Ten Invariants</div>
+    <p class="section-desc">These hold in every stage, in every agent, at all times. Violating one is an S1 defect and blocks the merge.</p>
+
+    <div class="invariants-grid">
+      <div class="inv-card">
+        <div class="inv-num">Invariant 01</div>
+        <div class="inv-title">Raw data is read-only</div>
+        <div class="inv-body">The original archive is never modified, moved or re-extracted in place. Its SHA-256 is verified in every stage that touches data.</div>
+      </div>
+      <div class="inv-card">
+        <div class="inv-num">Invariant 02</div>
+        <div class="inv-title">Labels never silently changed</div>
+        <div class="inv-body">Corrections go in a new column (<code>label_corrected</code>) with a logged reason. Original <code>label</code> and <code>detailed-label</code> are never rewritten in place.</div>
+      </div>
+      <div class="inv-card">
+        <div class="inv-num">Invariant 03</div>
+        <div class="inv-title">No balancing, ever</div>
+        <div class="inv-body">No SMOTE, no oversampling, no undersampling, no synthetic flows, no minority deletion — anywhere. Stage 12 documents the imbalance; it does not fix it.</div>
+      </div>
+      <div class="inv-card">
+        <div class="inv-num">Invariant 04</div>
+        <div class="inv-title">No scenario crosses a partition</div>
+        <div class="inv-body">Whole scenarios go to exactly one partition. Never split a capture to force a rare label into every set. If a label exists in one capture, that is a documented limitation.</div>
+      </div>
+      <div class="inv-card">
+        <div class="inv-num">Invariant 05</div>
+        <div class="inv-title">Nothing fitted outside training data</div>
+        <div class="inv-body">Imputation values, scaling parameters, encoding dictionaries, category frequencies — computed on train only. Applied unchanged to validation and test. Fit source recorded with every parameter.</div>
+      </div>
+      <div class="inv-card">
+        <div class="inv-num">Invariant 06</div>
+        <div class="inv-title">Every removed row is attributable</div>
+        <div class="inv-body">Every deletion is a numbered operation in the cleaning log with field, condition, reason, and row count. Reconciliation identity: raw = cleaned + removed, exactly.</div>
+      </div>
+      <div class="inv-card">
+        <div class="inv-num">Invariant 07</div>
+        <div class="inv-title">Every number is reproducible</div>
+        <div class="inv-body">Every row count, percentage, and checksum in a report traces to a committed script or notebook that any reader can re-run.</div>
+      </div>
+      <div class="inv-card">
+        <div class="inv-num">Invariant 08</div>
+        <div class="inv-title">Every change is reviewed</div>
+        <div class="inv-body">Branch, PR, review, merge. No direct pushes to main. No self-approval. The manager is the only merger and only when both keys agree.</div>
+      </div>
+      <div class="inv-card">
+        <div class="inv-num">Invariant 09</div>
+        <div class="inv-title">No evidence pack, no review</div>
+        <div class="inv-body">A PR without all five evidence items is not reviewable, however good the code is. The manager will not open the diff.</div>
+      </div>
+      <div class="inv-card">
+        <div class="inv-num">Invariant 10</div>
+        <div class="inv-title">ADR before irreversible decisions</div>
+        <div class="inv-body">A decision that cannot be undone cheaply gets an Architecture Decision Record before it is implemented, not after.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKFLOW -->
+<section id="workflow">
+  <div class="container">
+    <div class="section-title">Branch &amp; Review Workflow</div>
+    <p class="section-desc">All stage work targets EDL-Pipeline. Only manager-approved, tester-verified PRs reach main.</p>
+
+    <div class="flow-visual">
+      <div class="flow-row">
+        <div class="flow-node role">data-engineer</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node branch">stage/00-definition</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-label">commits work</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node pr">PR → EDL-Pipeline</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-label">evidence pack attached</div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-node role">manager</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-label">reviews scope, evidence, tests, docs, invariants</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node pr">APPROVE → assigns tester</div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-node role">tester</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-label">re-derives numbers with different tools</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node pr">five-line verdict</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-label">PASS / FAIL</div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-node role">manager</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-label">both keys: manager approve + tester PASS</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node merge">merge --squash → EDL-Pipeline</div>
+      </div>
+      <div class="flow-row" style="margin-bottom:0;">
+        <div class="flow-label">At milestone close:</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node merge">PR EDL-Pipeline → main</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-label">manager merges · tags version · updates status board</div>
+      </div>
+    </div>
+
+    <!-- PR STEPS -->
+    <div style="margin-top:1.5rem;">
+      <div style="font-size:.95rem;font-weight:700;color:#e6edf3;margin-bottom:.8rem;">Evidence Pack — Five Items, Every PR</div>
+      <div class="evidence-grid">
+        <div class="ev-card">
+          <div class="ev-num">Item 1</div>
+          <div class="ev-title">Test Output</div>
+          <div class="ev-desc">Full-suite Kaggle kernel log with the exact command used. Not just CI's fast suite on the sample capture.</div>
+        </div>
+        <div class="ev-card">
+          <div class="ev-num">Item 2</div>
+          <div class="ev-title">The Numbers</div>
+          <div class="ev-desc">Raw rows, removed, cleaned, reconciliation status, rare labels retained, output checksum across two runs.</div>
+        </div>
+        <div class="ev-card">
+          <div class="ev-num">Item 3</div>
+          <div class="ev-title">The Artifact</div>
+          <div class="ev-desc">The committed report or manifest, referenced by path. Never pasted into the PR body.</div>
+        </div>
+        <div class="ev-card">
+          <div class="ev-num">Item 4</div>
+          <div class="ev-title">Stage Note</div>
+          <div class="ev-desc"><code>docs/02-stages/stage-NN-*.md</code> written for someone who was not there. Numbers, not adjectives.</div>
+        </div>
+        <div class="ev-card">
+          <div class="ev-num">Item 5</div>
+          <div class="ev-title">ADR</div>
+          <div class="ev-desc">Required if the stage made a choice that cannot be cheaply undone. Filed in <code>docs/01-decisions/</code>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PATHS -->
+<section id="paths">
+  <div class="container">
+    <div class="section-title">Repository Map</div>
+    <p class="section-desc">Where everything lives in <code>/home/harish/IDP-LOCAL</code> (GitHub: Harish020904/IDP-LOCAL)</p>
+
+    <table class="paths-table">
+      <thead>
+        <tr><th>Path</th><th>Contains</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>docs/00-project/</td><td>brief.md, scope.md, dataset-sources.md</td><td>Project definition and canonical references</td></tr>
+        <tr><td>docs/01-decisions/</td><td>ADR-NNN-*.md</td><td>Architecture Decision Records — irreversible choices</td></tr>
+        <tr><td>docs/02-stages/</td><td>stage-NN-*.md</td><td>Stage notes — mirrored into Obsidian vault</td></tr>
+        <tr><td>docs/03-reviews/</td><td>PR-NNN-review.md</td><td>Tester review files</td></tr>
+        <tr><td>docs/04-reports/</td><td>cleaning-log.csv, checksums.sha256, figures</td><td>Generated reports — small outputs only</td></tr>
+        <tr><td>docs/05-log/</td><td>changelog.md, work log</td><td>Running log of decisions and progress</td></tr>
+        <tr><td>notebooks/</td><td>stage-NN-*.ipynb + kernel-metadata.json</td><td>One notebook per stage, one kernel metadata per stage</td></tr>
+        <tr><td>src/iot23/</td><td>Python modules</td><td>Importable logic — the notebook orchestrates, src does the work</td></tr>
+        <tr><td>tests/gates/</td><td>test_stage_NN_gate.py</td><td>Gate tests — one file per stage, run on real data in Kaggle</td></tr>
+        <tr><td>tests/unit/</td><td>test_*.py</td><td>Fast unit tests — run locally and in CI on sample capture</td></tr>
+        <tr><td>.agents/agents/</td><td>manager.md, data-engineer.md, tester.md</td><td>Executable agent definitions (Antigravity)</td></tr>
+        <tr><td>.agents/skills/</td><td>kaggle-run, stage-gate, obsidian-sync</td><td>Reusable skill scripts</td></tr>
+        <tr><td>.agents/rules/</td><td>data-safety.md, kaggle-compute.md, stage-gate.md</td><td>Always-on and conditional rules</td></tr>
+        <tr><td>AGENTS.md</td><td>Project constitution</td><td>Loaded into every agent on every turn</td></tr>
+      </tbody>
+    </table>
+
+    <!-- WHAT NEVER -->
+    <div style="margin-top:2rem;">
+      <div style="font-size:.95rem;font-weight:700;color:#e6edf3;margin-bottom:.8rem;">What Never Enters Git vs What Does</div>
+      <div class="never-grid">
+        <div class="never-card">
+          <h4 class="red">Never in git</h4>
+          <ul class="never-list no">
+            <li>data/ directory</li>
+            <li>*.parquet files</li>
+            <li>*.pcap, *.zip captures</li>
+            <li>out/ directory (full outputs)</li>
+            <li>.venv/</li>
+            <li>~/.kaggle/kaggle.json</li>
+            <li>Any file over 20 MB (except committed figures)</li>
+            <li>Any credential or token</li>
+          </ul>
+        </div>
+        <div class="never-card">
+          <h4 class="green">Always in git</h4>
+          <ul class="never-list yes">
+            <li>Checksums and manifests</li>
+            <li>Row counts and reports</li>
+            <li>Figures (committed PNG)</li>
+            <li>Notebooks (*.ipynb)</li>
+            <li>src/iot23/ modules</li>
+            <li>tests/ gate and unit tests</li>
+            <li>ADRs and stage notes</li>
+            <li>kernel-metadata.json</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <strong style="color:var(--text);">IoT-23 Dataset Engineering Pipeline</strong> ·
+    <a href="https://github.com/Harish020904/IDP-LOCAL" target="_blank">github.com/Harish020904/IDP-LOCAL</a> ·
+    <a href="https://www.kaggle.com/datasets/harishragavender0209/iot-23-raw" target="_blank">Dataset A on Kaggle</a>
+  </div>
+  <p class="citation">
+    Garcia, S., Parmisano, A., &amp; Erquiaga, M. J. (2020). IoT-23: A labeled dataset with malicious and benign IoT network traffic (Version 1.0.0).
+    Stratosphere Laboratory. <a href="https://doi.org/10.5281/zenodo.4743746" target="_blank">doi:10.5281/zenodo.4743746</a>
+  </p>
+  <div style="margin-top:.5rem;font-size:.75rem;">Generated 2026-11-23 · Status board reflects live project state</div>
+</footer>
+
+</body>
+</html>
