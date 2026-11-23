@@ -1,0 +1,10 @@
+issue_id,check_name,severity,condition,affected_records,handling_decision
+Q01,Truncated or Missing Fields,High,Column count != 23,0,Quarantine malformed rows in Stage 06
+Q02,Malformed Timestamps,High,ts <= 0 or non-float,0,Quarantine unparseable temporal records
+Q03,Negative Durations,Medium,duration < 0.0,0,Investigate and set duration_flag in Stage 06
+Q04,Invalid Transport Ports,High,port < 0 or port > 65535,0,Quarantine invalid port flows
+Q05,Duplicate Connection UIDs,Medium,Repeated UID in capture,0,Investigate; do not deduplicate solely on feature equality
+Q06,Missing Annotation Labels,Critical,label is '-' or empty,0,Quarantine flows lacking ground truth; do not impute
+Q07,Label Inconsistency,Critical,Benign with attack sub-label,0,Preserve original labels; record correction in label_flag
+Q08,Unset Metric Fields,Informational,Metric value is '-',High,Preserve unset token '-'; do not blanket fill with zero
+Q09,Extreme Class Imbalance,Informational,Minority attack classes,Present,Preserve rare attack classes; no balancing or deletion
