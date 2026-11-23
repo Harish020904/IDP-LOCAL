@@ -1,0 +1,15 @@
+{
+  "id": "harishragavender0209/iot23-stage-NN-name",
+  "title": "IoT23 Stage NN Name",
+  "code_file": "stage-NN-name.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": false,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "dataset_sources": ["harishragavender0209/iot-23-raw"],
+  "competition_sources": [],
+  "kernel_sources": [],
+  "model_sources": []
+}
