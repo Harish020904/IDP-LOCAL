@@ -1,0 +1,24 @@
+# Data and intermediates
+data/
+out/
+*.parquet
+*.pcap
+*.zip
+*.tar.gz
+
+# Python and testing
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+
+# Kaggle credentials
+kaggle.json
+.kaggle/
+
+# OS and editors
+.DS_Store
+*.swp
+*~

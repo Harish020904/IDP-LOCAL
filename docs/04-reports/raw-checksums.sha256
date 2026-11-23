@@ -1,0 +1,20 @@
+# Canonical File Size and Checksum Registry for Kaggle Dataset A (harishragavender0209/iot-23-raw)
+# Format: <size_in_bytes>  <filename>
+1340179107  10.labeled
+3019311  11.labeled
+7867920121  12.labeled
+428943  13.labeled
+419604  14.labeled
+8139370158  15.labeled
+3070319722  2.labeled
+853630635  3.labeled
+531738215  4.labeled
+31179  5.labeled
+9363261631  6.labeled
+585829  7.labeled
+10885361439  8.labeled
+1787852355  9.labeled
+182147  benign-honeypot2.labeled
+18024  benign-honeypot3.labeled
+61653  benign.labeled
+467559811  conn.log.labeled
