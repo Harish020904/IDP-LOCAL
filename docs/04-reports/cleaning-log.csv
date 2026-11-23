@@ -1,0 +1,9 @@
+operation_number,field_or_condition,reason,records_examined,records_changed,records_removed,date,version
+OP01,Column count != 23,Quarantine truncated or malformed rows failing canonical schema,325307816,0,0,2026-11-23,V3
+OP02,ts <= 0 or unparseable,Quarantine records with invalid temporal timestamps,325307816,0,0,2026-11-23,V3
+OP03,id.orig_p or id.resp_p < 0 or > 65535,Quarantine records with out-of-range transport ports,325307816,0,0,2026-11-23,V3
+OP04,label is '-' or empty,Quarantine flows lacking ground truth supervisory labels,325307816,0,0,2026-11-23,V3
+OP05,duration < 0.0,Flag negative durations with duration_flag; preserve raw value,325307816,0,0,2026-11-23,V3
+OP06,Benign with attack detailed-label,Flag label inconsistency in label_flag; preserve original labels,325307816,0,0,2026-11-23,V3
+OP07,Unset metric field is '-',Preserve unset token '-'; do not blanket fill with zero,325307816,0,0,2026-11-23,V3
+OP08,Minority attack classes,Preserve rare attack classes; strictly no balancing or deletion,325307816,0,0,2026-11-23,V3

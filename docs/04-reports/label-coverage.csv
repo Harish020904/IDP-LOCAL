@@ -1,0 +1,14 @@
+label_name,scenario_count,in_train,in_val,in_test,is_single_scenario,notes
+Benign,3,yes,yes,yes,no,Multi-scenario distribution
+Malicious,15,yes,yes,yes,no,Multi-scenario distribution
+PartOfAHorizontalPortScan,5,yes,no,yes,no,Multi-scenario distribution
+Okiru,1,yes,no,no,yes,Single-scenario limitation: present exclusively in CTU-IoT-Malware-Capture-36-1 (train); not split per Invariant 4
+DDoS,1,no,no,yes,yes,Single-scenario limitation: present exclusively in CTU-IoT-Malware-Capture-33-1 (test); not split per Invariant 4
+C&C,5,yes,yes,yes,no,Multi-scenario distribution
+Torii,1,no,no,yes,yes,Single-scenario limitation: present exclusively in CTU-IoT-Malware-Capture-20-1 (test); not split per Invariant 4
+Trojan,1,no,yes,no,yes,Single-scenario limitation: present exclusively in CTU-IoT-Malware-Capture-42-1 (val); not split per Invariant 4
+Somware,1,no,yes,no,yes,Single-scenario limitation: present exclusively in CTU-IoT-Malware-Capture-7-1 (val); not split per Invariant 4
+Gagfyt,1,yes,no,no,yes,Single-scenario limitation: present exclusively in CTU-IoT-Malware-Capture-60-1 (train); not split per Invariant 4
+Muhstik,1,yes,no,no,yes,Single-scenario limitation: present exclusively in CTU-IoT-Malware-Capture-3-1 (train); not split per Invariant 4
+Kenjiro,1,no,no,yes,yes,Single-scenario limitation: present exclusively in CTU-IoT-Malware-Capture-33-1 (test); not split per Invariant 4
+Hide and Seek,1,yes,no,no,yes,Single-scenario limitation: present exclusively in CTU-IoT-Malware-Capture-1-1 (train); not split per Invariant 4

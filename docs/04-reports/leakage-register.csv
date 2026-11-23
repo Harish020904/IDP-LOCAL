@@ -1,0 +1,7 @@
+leakage_id,vector_name,affected_columns,risk_level,mechanism,mitigation_strategy
+LEAK01,Device IP Memorization,id.orig_h,High,Infected IoT devices use static IP addresses. Classifiers using raw IPs memorize device identities instead of generalizable traffic dynamics,Designated as metadata role; excluded from feature tensor X but preserved for audit and scenario traceability
+LEAK02,Target / C&C IP Memorization,id.resp_h,High,Attacks target specific scanning destinations or connect to static C&C infrastructure IPs,Designated as metadata role; excluded from feature tensor X but preserved for forensic traceability
+LEAK03,Temporal Timeline Leakage,ts,High,Monotonic timestamps allow sequence models to reconstruct scenario execution order rather than flow kinetics,Designated as metadata role; excluded from feature tensor X
+LEAK04,Zeek Connection UID Artifact,uid,Medium,Synthetic hash identifying individual flows; carries no physical or behavioral intrusion signal,Designated as metadata role; retained purely as primary key
+LEAK05,Direct Target Leakage,label; detailed-label,Critical,Inclusion of target annotations in model inputs yields trivial 100% training accuracy,Strict role separation: target columns quarantined from model inputs
+LEAK06,Zeek Environment Flags,local_orig; local_resp; tunnel_parents,Low,Lab-specific Zeek sensor deployment flags that do not reflect network flow behavior,Designated as metadata role; excluded from modeling features
