@@ -1,0 +1,27 @@
+column_name,role,data_type,rationale,leakage_risk
+ts,metadata,float,Epoch timestamp; retained for temporal sequence validation,High
+uid,metadata,string,Zeek connection identifier; primary key for flow joins,Medium
+id.orig_h,metadata,string,Originating host IP; preserved for traceability (do NOT drop blindly),High
+id.orig_p,feature,int,Originating transport port; client port distribution,Low
+id.resp_h,metadata,string,Responding host IP; preserved for forensic traceability (do NOT drop blindly),High
+id.resp_p,feature,int,Responding transport port; destination service identifier,Low
+proto,feature,string,Transport protocol (tcp/udp/icmp),None
+service,feature,string,Application layer protocol identified by Zeek,None
+duration,feature,float,Connection duration in seconds,None
+orig_bytes,feature,int,Bytes sent by originator,None
+resp_bytes,feature,int,Bytes sent by responder,None
+conn_state,feature,string,Connection state history (e.g. S0 SF OTH),None
+local_orig,metadata,string,Zeek local origin flag; uninformative in IoT-23 lab,Low
+local_resp,metadata,string,Zeek local responder flag; uninformative in IoT-23 lab,Low
+missed_bytes,feature,int,Bytes missed due to network packet drops,None
+history,feature,string,Zeek TCP handshake/flow state history flags,None
+orig_pkts,feature,int,Total packets transmitted by originator,None
+orig_ip_bytes,feature,int,IP layer bytes transmitted by originator,None
+resp_pkts,feature,int,Total packets transmitted by responder,None
+resp_ip_bytes,feature,int,IP layer bytes transmitted by responder,None
+tunnel_parents,metadata,string,Tunnel encapsulation parents; mostly unset,Low
+label,target,string,Primary supervisory classification (Malicious vs Benign),Critical
+detailed-label,target,string,Fine-grained attack scenario annotation,Critical
+duration_flag,metadata,string,Diagnostic flag for negative or anomalous duration,None
+label_flag,metadata,string,Diagnostic flag for inconsistent label annotations,None
+cleaning_status,metadata,string,Status flag confirming record passed Stage 06 gates,None
