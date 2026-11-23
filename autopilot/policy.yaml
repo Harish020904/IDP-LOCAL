@@ -1,0 +1,41 @@
+# ---------------------------------------------------------------------------
+# Model routing policy for the IoT-23 autopilot.
+#
+# Slugs are CANDIDATES. The router validates every one against `agy models` and
+# silently skips anything your account does not expose, so it is safe to list
+# models you are not entitled to.
+#
+# Refresh the real list with:   agy models
+# Then check the mapping with:  python3 autopilot/model_router.py --discover
+# ---------------------------------------------------------------------------
+
+# Absolute last resort when everything above is exhausted.
+# Gemini 3.8 Flash — the floor. Never remove this line.
+floor_model: gemini-3.8-flash-medium
+
+# Agent execution mode for headless turns. "auto" lets workspace edits and safe,
+# reversible commands run without a prompt; risky actions still need approval and
+# are soft-denied in headless mode (the driver treats that as a failed turn).
+# Set to "" to fall back to your settings.json agentMode.
+agy_mode: auto
+
+# Task class -> ordered fallback chain. First available, non-cooling model wins.
+chains:
+  build: [gemini-3.1-pro-high, gemini-3.8-flash-high, gemini-3.8-flash-medium]
+  review: [gemini-3.1-pro-high, gemini-3.8-flash-high, gemini-3.8-flash-medium]
+  verify: [gemini-3.1-pro-high, gemini-3.8-flash-high, gemini-3.8-flash-medium]
+  docs: [gemini-3.8-flash-high, gemini-3.8-flash-medium]
+  mechanical: [gemini-3.8-flash-medium]
+
+# Reasoning effort per task class. Omit a key to use the model default.
+effort:
+  build: high
+  review: high
+  verify: high
+  docs: medium
+  mechanical: low
+
+# How long a model sits out after it reports exhaustion. Override per model.
+cooldown_minutes:
+  default: 300
+  gemini-3.8-flash-medium: 30

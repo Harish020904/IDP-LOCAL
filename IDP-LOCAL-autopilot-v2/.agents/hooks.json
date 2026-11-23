@@ -1,0 +1,48 @@
+{
+  "guard-commands": {
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 autopilot/hooks/hooks.py pretool",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  },
+  "audit-tools": {
+    "PostToolUse": [
+      {
+        "matcher": "run_command|replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 autopilot/hooks/hooks.py posttool",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  },
+  "session-init": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "python3 autopilot/hooks/hooks.py session",
+        "timeout": 15
+      }
+    ]
+  },
+  "session-stop": {
+    "Stop": [
+      {
+        "type": "command",
+        "command": "python3 autopilot/hooks/hooks.py stop",
+        "timeout": 15
+      }
+    ]
+  }
+}
