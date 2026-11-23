@@ -1,0 +1,8 @@
+level,class_name,count,percentage
+coarse,Benign,3,30.00%
+coarse,Malicious,7,70.00%
+detailed,-,3,30.00%
+detailed,PartOfAHorizontalPortScan,3,30.00%
+detailed,C&C,1,10.00%
+detailed,Okiru,2,20.00%
+detailed,DDoS,1,10.00%

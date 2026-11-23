@@ -1,0 +1,19 @@
+#separator \x09
+#set_separator	,
+#empty_field	(empty)
+#unset_field	-
+#path	conn
+#open	2018-05-09-17-48-52
+#fields	ts	uid	id.orig_h	id.orig_p	id.resp_h	id.resp_p	proto	service	duration	orig_bytes	resp_bytes	conn_state	local_orig	local_resp	missed_bytes	history	orig_pkts	orig_ip_bytes	resp_pkts	resp_ip_bytes	tunnel_parents	label	detailed-label
+#types	time	string	addr	port	addr	port	enum	string	interval	count	count	string	bool	bool	count	string	count	count	count	count	set[string]	string	string
+1525878532.012345	C1AbCdEfGhIjKlMnOp	192.168.1.195	41234	192.168.1.1	53	udp	dns	0.012450	45	120	SF	-	-	0	Dd	1	73	1	148	-	Benign	-
+1525878533.123456	C2BcDeFgHiJkLmNoPq	192.168.1.195	52345	185.244.25.108	80	tcp	http	1.234560	250	1450	SF	-	-	0	ShADadFf	5	510	6	1750	-	Benign	-
+1525878534.234567	C3CdEfGhIjKlMnOpQr	192.168.1.195	60123	71.6.216.224	23	tcp	-	-	-	-	S0	-	-	0	S	1	60	0	0	-	Malicious	PartOfAHorizontalPortScan
+1525878534.345678	C4DeFgHiJkLmNoPqRs	192.168.1.195	60124	71.6.216.225	23	tcp	-	-	-	-	S0	-	-	0	S	1	60	0	0	-	Malicious	PartOfAHorizontalPortScan
+1525878535.456789	C5EfGhIjKlMnOpQrSt	192.168.1.195	60125	71.6.216.226	2323	tcp	-	-	-	-	S0	-	-	0	S	1	60	0	0	-	Malicious	PartOfAHorizontalPortScan
+1525878536.567890	C6FgHiJkLmNoPqRsTu	192.168.1.195	48123	66.249.66.1	80	tcp	http	0.543210	120	340	SF	-	-	0	ShADaFf	4	328	4	548	-	Benign	-
+1525878537.678901	C7GhIjKlMnOpQrStUv	192.168.1.195	33456	178.62.200.10	443	tcp	ssl	2.345678	850	4200	SF	-	-	0	ShADadFf	8	1266	10	4720	-	Malicious	C&C
+1525878538.789012	C8HiJkLmNoPqRsTuVw	192.168.1.195	55123	103.25.56.2	37215	tcp	-	0.000000	0	0	OTH	-	-	0	C	1	40	0	0	-	Malicious	Okiru
+1525878539.890123	C9IjKlMnOpQrStUvWx	192.168.1.195	55124	103.25.56.3	37215	tcp	-	-	-	-	S0	-	-	0	S	1	40	0	0	-	Malicious	Okiru
+1525878540.901234	C0JkLmNoPqRsTuVwXy	192.168.1.195	44321	198.51.100.1	80	tcp	-	-	-	-	REJ	-	-	0	R	1	40	1	40	-	Malicious	DDoS
+#close	2018-05-09-17-48-53
