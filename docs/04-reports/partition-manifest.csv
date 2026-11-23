@@ -1,0 +1,19 @@
+scenario_id,file_name,capture_type,partition,description
+CTU-IoT-Malware-Capture-1-1,conn.log.labeled,malicious,train,Hide and Seek botnet
+CTU-IoT-Malware-Capture-3-1,2.labeled,malicious,train,Muhstik botnet
+CTU-IoT-Malware-Capture-48-1,6.labeled,malicious,train,Mirai botnet
+CTU-IoT-Malware-Capture-60-1,7.labeled,malicious,train,Gagfyt botnet
+CTU-IoT-Malware-Capture-8-1,8.labeled,malicious,train,Mirai botnet
+CTU-IoT-Malware-Capture-9-1,9.labeled,malicious,train,Mirai botnet
+CTU-IoT-Malware-Capture-52-1,11.labeled,malicious,train,Mirai botnet
+CTU-IoT-Malware-Capture-35-1,13.labeled,malicious,train,Mirai botnet
+CTU-IoT-Malware-Capture-36-1,14.labeled,malicious,train,Okiru botnet
+CTU-Honeypot-Capture-5-1,benign-honeypot2.labeled,benign,train,Benign honeypot traffic
+CTU-IoT-Malware-Capture-21-1,5.labeled,malicious,val,Mirai botnet
+CTU-IoT-Malware-Capture-42-1,4.labeled,malicious,val,Trojan
+CTU-IoT-Malware-Capture-7-1,10.labeled,malicious,val,Somware botnet
+CTU-Honeypot-Capture-4-1,benign.labeled,benign,val,Benign normal traffic
+CTU-IoT-Malware-Capture-20-1,3.labeled,malicious,test,Torii botnet
+CTU-IoT-Malware-Capture-39-1,12.labeled,malicious,test,IRec-Mirai botnet
+CTU-IoT-Malware-Capture-33-1,15.labeled,malicious,test,Kenjiro botnet
+CTU-Honeypot-Capture-7-1,benign-honeypot3.labeled,benign,test,Benign honeypot traffic
