@@ -1,0 +1,13 @@
+label,level,train_count,val_count,test_count,total_count,scenarios,notes
+PartOfAHorizontalPortScan,detailed,142000000,0,73000000,215000000,5,Ubiquitous attack across 5 captures
+Okiru,detailed,45000000,0,0,45000000,1,Single-scenario: CTU-IoT-Malware-Capture-36-1 (train)
+DDoS,detailed,0,0,21000000,21000000,1,Single-scenario: CTU-IoT-Malware-Capture-33-1 (test)
+C&C,detailed,8200000,1800000,1000000,11000000,5,Distributed C&C communications across 5 captures
+Benign,coarse,18214700,6165300,8150782,32530782,3,Distributed across 3 honeypot captures (1 in each partition)
+Torii,detailed,0,0,420000,420000,1,Single-scenario: CTU-IoT-Malware-Capture-20-1 (test)
+Trojan,detailed,0,150000,0,150000,1,Single-scenario: CTU-IoT-Malware-Capture-42-1 (val)
+Somware,detailed,0,98000,0,98000,1,Single-scenario: CTU-IoT-Malware-Capture-7-1 (val)
+Gagfyt,detailed,45000,0,0,45000,1,Single-scenario: CTU-IoT-Malware-Capture-60-1 (train)
+Muhstik,detailed,28000,0,0,28000,1,Single-scenario: CTU-IoT-Malware-Capture-3-1 (train)
+Kenjiro,detailed,0,0,18000,18000,1,Single-scenario: CTU-IoT-Malware-Capture-33-1 (test)
+Hide and Seek,detailed,12000,0,0,12000,1,Single-scenario: CTU-IoT-Malware-Capture-1-1 (train)
